@@ -1,0 +1,12 @@
+pathlib
+flask_cachebuster
+flask_cache_buster
+flask
+psycopg2
+boto3
+apscheduler
+logging
+gunicorn
+flask_script
+flask_migrate
+flask_cors
