@@ -1,0 +1,87 @@
+<html>
+	<head>
+		<title>Review Your HITs</title>
+		<script type='text/javascript' src="https://code.jquery.com/jquery-1.10.2.js">
+
+			
+		</script>
+	</head>
+	<body>
+
+		<ul style="display:block;float:center;">
+			<li>Enter password to enable actions</li>
+			<input type='text' id='password' />
+			<button type='button' onclick='checkPassword()'>validate password</button>
+			{% for HIT in HITs %}
+			<li id={{HIT.HITId}} style="display:inline;">
+				<p>HIT Title: {{ HIT.title }}</p>
+				<p>HIT ID: {{ HIT.HITId }}</p>
+				<p>Assignments Available: {{ HIT.available }}</p>
+				<p>Assignments Pending: {{ HIT.pending }}</p>
+				<p>Status: {{ HIT.status }}</p>
+				<p>Max Assignments: {{ HIT.max }}</p>
+				{% for listnum,count in HIT.lists.items() %}
+					<p>List {{ listnum }}: {{ count }}</p>
+				{% endfor %}
+				<button class = 'button' name="{{ HIT.HITId }}" function='/expireHIT' disabled>Expire HIT</button>
+				<button class='button' name='{{ HIT.HITId }}' function='/deleteHIT' disabled>Delete HIT</button>
+				<button class='button' name='{{ HIT.HITId }}' function='/approveAssignments' disabled>Approve Submissions</button>
+				<hr />
+			</li>
+			{% endfor %}
+		</ul>
+		<script>
+			console.log('loaded!');
+			$(document).ready(function(){
+
+				console.log('loaded!');
+				$(".button").click(function(e){
+					//e.preventDefault();
+					var func = $(this).attr('function');
+					var name = $(this).attr('name');
+					console.log('click!');
+					$.ajax({
+						dataType:'json',
+						contentType: 'application/json',
+			            data: JSON.stringify({
+			                HITId: name
+			            }),
+			            type: 'POST',
+			            url: func,
+			            success: function(response) {
+			            	console.log(func);
+			                console.log(func == ('/deleteHIT'));
+			                if (func  === '/deleteHIT')
+			                	$('#'+name).remove();
+			                //location.reload();
+			            },
+			            error: function(error) {
+			                console.log(error);
+			            }
+			        });
+				});
+			});
+
+			function checkPassword(){
+				$.ajax({
+					dataType:'json',
+					contentType:'application/json',
+					data: {
+						'password': $('#password').val()
+					},
+					type:'GET',
+					url:'/checkPassword',
+					success: function(response){
+						console.log(response)
+						if(response == '200')
+							$('.button').removeAttr('disabled');
+					},
+					error: function(error){
+						console.log(error)
+					}
+
+				});
+			}
+		</script>
+	</body>
+</html>

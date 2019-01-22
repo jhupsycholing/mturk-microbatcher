@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+	<html>
+		<head>
+			<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+			<script type='text/javascript' src='https://s3.amazonaws.com/mturk-public/externalHIT_v1.js'></script>
+			<script type='text/javascript' src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js" ></script>
+		</head>
+		<body>
+			<div style='text-align:center;width=50%;'>
+				<form name='mturk_form' method='post' id = 'mturk_form' action='https://mturkrouter-api-heroku.herokuapp.com/submit'>
+				<input type='hidden' value='' name='assignmentId' id = 'assignmentId' />
+				<input type='hidden' value='' name='hitId' id = 'hitId' />
+				{% if previewText %}
+					<p>{{ previewText }}</p>
+				{% endif %}
+				<p><b>IMPORTANT: To ensure the validity of the experimental data, <i>please</i> do not refresh the page and attempt to restart the experiment. The answers you provide are important, but we do not expect 100 percent correct responses. Be careful not to close the web browser, as the survey link will only work once.</b></p>
+				{% if nativeEnglish %}
+					<p style="color:red"><b>This experiment is intended for native speakers of English only. This means that you must have learned English before the age of 7. Lying about your English proficiency is considered a violation of the Mechanical Turk terms of service.</b></p>
+				{% endif %}
+				<br />
+				<a id='link' target="_blank" >Survey Link</a>
+				<br />
+				<p id='survey'>Survey Code:</p><input type='text' name='code' id='code' required  />
+				<br />
+				<p><input type='submit' id='submitButton' value='Please input correct survey code' disabled/></p>
+				</form>
+			</div>
+			<script>
+				turkSetAssignmentID();
+				$('.disabled').click(function(e){
+					e.preventDefault();
+				});
+				var oldURL = $('#link').attr('href');
+				var assignmentId = turkGetParam('assignmentId','');
+				var hitId = turkGetParam('hitId','');
+				var workerId = turkGetParam('workerId','');
+				var res = '';
+				var newURL = '/ibex' + "?assignmentId="+assignmentId+"&HITId="+ hitId+"&workerId="+workerId;
+				$('#assignmentId').val(assignmentId);
+				$('#hitId').val(hitId);
+						
+				if (assignmentId != "ASSIGNMENT_ID_NOT_AVAILABLE") {
+					$('#link').attr('href',newURL);
+				}
+				var changeTimer = false;
+				$('#code').on('input',function(){
+						    if(changeTimer !== false) {
+						    	clearTimeout(changeTimer);
+						    	changeTimer = false;
+						    }
+						    changeTimer = setTimeout(function(){
+						    	$('#submit').val('confirming...please wait');
+						        $.ajax({
+						        	type:'GET',
+						        	data:{
+						        		code: $('#code').val(),
+						        		hitId:hitId,
+						        		assignmentId: assignmentId
+
+						        	},
+						        	dataType:'json',
+						        	contentType:'application/json',
+						        	url: '/submit',
+						        	success: function(response) {
+						        		console.log('success');
+						        		console.log(response);
+						        		res = response;
+						        		if(response['valid'] === 'true'){
+						        			console.log('valid');
+						        			$('#submitButton').val('Submit');
+						        			$('#submitButton').prop('disabled',false);
+						        			$('#survey').text('Survey Code: (CORRECT SURVEY CODE)');
+						        		}
+						        		else if(response['valid'] === 'nosub'){
+						        			$('#survey').text('Survey Code: (YOU MUST FIRST VISIT THE SURVEY LINK)')
+						        		}
+						        		else{
+						        			console.log('code');
+						        			$('#survey').text('Survey Code: (INCORRECT SURVEY CODE)');
+						        		}
+						        	},
+						        	error: function(response) {
+						        		console.log('error');
+						        		$('#submitButton').val('Submit');
+						        		$('#submitButton').prop('disabled',false);
+						        	}
+						        });
+						        changeTimer = false;
+						    },300);
+						    changeTimer = true;
+						});
+			</script>
+		</body>
+	</html>

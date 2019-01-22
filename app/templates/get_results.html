@@ -1,0 +1,16 @@
+<html>
+	<head>
+		<title>Get Results</title>
+	</head>
+	<body>
+		<p>Select a HIT to see results for</p>
+		<form action='/results' method='GET'>
+			<select name='HITId' id='HITId'>
+				{% for HIT in HITs %}
+					<option name='{{ HIT.title }}' value='{{ HIT.ID }}'>{{ HIT.title }} - {{ HIT.created }}</option>
+				{% endfor %}
+			</select>
+			<input name="submit" id='submit' type="submit" value="Submit" />
+		</form>
+	</body>
+</html>
