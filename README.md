@@ -15,13 +15,13 @@ On top of this key feature, our app can:
   - Expire, Delete, or Approve Assignments for a given HIT
   - Switch easily between Sandbox and Mechanical Turk
   
-This first release of the Study Manager is designed specifically for Ibex experiments, but it contains helper functions for custom experiments that the researcher can host directly from the server. We use the application for this purpose in our lab, and I will provide a dummy example soon that fully demonstrates this alternative functionality.
+This first release of the Study Manager is designed specifically for Ibex experiments, but it contains helper functions for custom experiments that the researcher can host directly from the server. We use the application for this purpose in our lab, and we will provide a dummy example soon that fully demonstrates this alternative functionality.
 
 **This application was developed by Brian Leonard (bleona10@jhu.edu) in his capacity as Lab Manager of the JHU Computation and Psycholinguistics Lab (http://jhpsycholing.webfactional.com/), which is overseen by Dr. Tal Linzen (http://tallinzen.net)**
  
 ## Installation
 
-Currently, we find it easiest to set up `mTurk Study Manager` as a Heroku application using an SQLAlchemy database. Otherwise, the user will need to use their own computer as a high-traffic server or use a service like webfactional for hosting. These options will be fleshed out soon.
+Currently, we find it easiest to set up the `mTurk Study Manager` as a Heroku application using an SQLAlchemy database. Otherwise, the user will need to use their own computer as a high-traffic server or use a service like webfactional for hosting. These options will be fleshed out soon.
 
 First, clone this repository into a directory on your computer
       
@@ -29,13 +29,13 @@ First, clone this repository into a directory on your computer
        
 Then, create a free Heroku account if you don't already have one and select 'Create New App' once you've logged in.
 
-For 'Deployment Method', we'll be using the Heroku CLI, which you should download and install from [here][https://devcenter.heroku.com/articles/heroku-command-line]
+For 'Deployment Method', we'll be using the Heroku CLI, which you should download and install from https://devcenter.heroku.com/articles/heroku-command-line
 
 Make sure that you're logged in with the CLI by typing
 
         heroku login
         
-in the terminal/console and entering your account credentials. Then, you just need to add the heroku remote from within the directory you cloned into:
+in the terminal/console and entering your account credentials. Then, you just need to add the heroku remote in directory you cloned into:
 
         heroku git:remote -a [the name of your application]
         
@@ -45,13 +45,13 @@ Now, you can deploy your application with these three steps
         git commit -m 'first commit'
         git push heroku master
         
-
+ **IMPORTANT SECURITY NOTICE** -- It is safe to push applications containing sensitive AWS credentials to heroku applications and the heroku repositories that host them, but be careful to never push a config file with AWS credentials to a public github repository for any reason. It will compromise the security of your account.
         
 ## Configuration
         
 The final step will be to fill in your app's config file with the necessary credentials to interface with your Amazon Web Services account and your SQLAlchemy database.
 
-Inside the 'appconfig.cfg' file, which is found in the 'app' directory, you will find a template ready to fill out. For your `AWS_ACCESS_KEY` and `AWS_SECRET_ACCESS_KEY`, if you don't know how to find these, you can follow [this simple guide][https://help.bittitan.com/hc/en-us/articles/115008255268-How-do-I-find-my-AWS-Access-Key-and-Secret-Access-Key-]. 
+Inside the 'appconfig.cfg' file, which is found in the 'app' directory, you will find a template ready to fill out. If you don't know how to find your `AWS_ACCESS_KEY` and `AWS_SECRET_ACCESS_KEY`, you can follow this simple guide: https://help.bittitan.com/hc/en-us/articles/115008255268-How-do-I-find-my-AWS-Access-Key-and-Secret-Access-Key- . 
 
 For your `SQLALCHEMY_DATABASE_URI`, you can find this by logging into heroku.com, navigating to the homepage for the app you've created, and checking the 'Installed Add-ons' section. If there's an add-on called 'Heroku Postgres', then click this. Otherwise click 'Configure Add-ons' and search 'postgres' to add a database. Once you've clicked on your postgres database, navigate to 'Settings' and click 'View Credentials'. Copy the field labeled 'URI' into your config file as `SQLALCHEMY_DATABASE_URI`.
 
@@ -109,7 +109,7 @@ If for any reason you need to reset your database and clear your tables (make su
   
 --------------
   
- **IMPORTANT SECURITY NOTICE** -- It is safe to push applications containing sensitive AWS credentials to heroku applications and the heroku repositories that host them, but be careful to never push a config file with AWS credentials to a public github repository for any reason. It will compromise the security of your account.
+
   
   
 
