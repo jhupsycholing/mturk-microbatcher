@@ -1,6 +1,6 @@
-# mTurk-Ibex-Study-Manager
+# mTurk-Microbatcher
 
-The `mTurk Study Manager` is an easy-to-use Flask application designed to streamline the process of running web experiments (Ibex experiments in particular) on the Mechanical Turk platform.
+The `mTurk microbatcher` is an easy-to-use Flask application designed to streamline the process of running web experiments (Ibex experiments in particular) on the Mechanical Turk platform.
 
 There are a number of mTurk interfaces available at the moment, but **this app will appeal to researchers interested in running web experiments that require multiple "lists"**, that is, multiple versions of the same experiment with different orderings of stimuli or different factors present.
 
@@ -15,17 +15,17 @@ On top of this key feature, our app can:
   - Expire, Delete, or Approve Assignments for a given HIT
   - Switch easily between Sandbox and Mechanical Turk
   
-This first release of the Study Manager is designed specifically for Ibex experiments, but it contains helper functions for custom experiments that the researcher can host directly from the server. We use the application for this purpose in our lab, and we will provide a dummy example soon that fully demonstrates this alternative functionality.
+This first release of the microbatcher is designed specifically for Ibex experiments, but it contains helper functions for custom experiments that the researcher can host directly from the server. We use the application for this purpose in our lab, and we will provide a dummy example soon that fully demonstrates this alternative functionality.
 
 **This application was developed by Brian Leonard (bleona10@jhu.edu) in his capacity as Lab Manager of the JHU Computation and Psycholinguistics Lab (http://jhpsycholing.webfactional.com/), which is overseen by Dr. Tal Linzen (http://tallinzen.net)**
  
 ## Installation
 
-Currently, we find it easiest to set up the `mTurk Study Manager` as a Heroku application using an SQLAlchemy database. Otherwise, the user will need to use their own computer as a high-traffic server or use a service like webfactional for hosting. These options will be fleshed out soon.
+Currently, we find it easiest to set up the `mTurk microbatcher` as a Heroku application using an SQLAlchemy database. Otherwise, the user will need to use their own computer as a high-traffic server or use a service like webfactional for hosting. These options will be fleshed out soon.
 
 First, clone this repository into a directory on your computer
       
-       git clone https://github.com/jhupsycholing/mturk-ibex-study-manager.git
+       git clone https://github.com/jhupsycholing/mturk-microbatcher.git
        
 Then, create a free Heroku account if you don't already have one and select 'Create New App' once you've logged in.
 
@@ -61,7 +61,7 @@ The `SANDBOX` variable has True as its default value. This means all the HITs yo
 
 ## Usage
 
-You will use your web browser to interface with the `mTurk Study Manager`. There are a number of pages you can visit to access the features of the application, once running on heroku.
+You will use your web browser to interface with the `mTurk microbatcher`. There are a number of pages you can visit to access the features of the application, once running on heroku.
 
 Before using the app, you should set up your database by visiting `https://[your-app-name].herokuapp.com/dropTables`
 
@@ -73,7 +73,7 @@ To create a HIT, visit this URL: `https://[your-app-name].herokuapp.com/createHI
 
 Once there you'll be presented with an html form that includes everything you need to configure your first experiment:
   - **An option to select a previous HIT that you have run**, which will then fill most of the details needed automatically
-  - **The URL for the Ibex experiment you're running**. If something other than an Ibex URL is entered here, the `mTurk Study Manager` will assume you are running a custom web experiment with your own HTML and JS set up
+  - **The URL for the Ibex experiment you're running**. If something other than an Ibex URL is entered here, the `mTurk microbatcher` will assume you are running a custom web experiment with your own HTML and JS set up
   - **The Title of the HIT** *
   - **A Description of the HIT**
   - **Some Keywords to help turkers find the HIT** (separated by comma)
@@ -91,7 +91,7 @@ Once there you'll be presented with an html form that includes everything you ne
   - **Equal number of subjects?** -- Will you have the same number of subjects for each list? If yes, indicate how many. If no, indicate the amount of subjects for each individual list
   
   
-*It should be noted that `mTurk Study Manager` uses HIT titles to keep track of past experiments. Whenever a subject completes a HIT, they will become associated with two qualifications. One will have the same name as the title of the HIT, indicating that they have completed a HIT with this Title. If you use consistent titles for different Ibex experiments you're running, you can add this qualification to the 'Excluded' list to blacklist anyone who has completed that experiment before. The other qualification is used to keep track of subjects across a series of micro-batched HITs (which is how all HITs are distributed with this app). The name of this qualification is in the form '{HIT Title} -- {HITId}', where HITId corresponds to the ID for the first micro-batch in the series.
+*It should be noted that `mTurk microbatcher` uses HIT titles to keep track of past experiments. Whenever a subject completes a HIT, they will become associated with two qualifications. One will have the same name as the title of the HIT, indicating that they have completed a HIT with this Title. If you use consistent titles for different Ibex experiments you're running, you can add this qualification to the 'Excluded' list to blacklist anyone who has completed that experiment before. The other qualification is used to keep track of subjects across a series of micro-batched HITs (which is how all HITs are distributed with this app). The name of this qualification is in the form '{HIT Title} -- {HITId}', where HITId corresponds to the ID for the first micro-batch in the series.
 
   
 ### Review HITs
