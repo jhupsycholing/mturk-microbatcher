@@ -408,10 +408,6 @@ def create():
 	Included = request.args.getlist('Included')
 	allEqual = request.args.get('allequal')
 	numberApproved = request.args.get('Approved')
-	if numberApproved == '':
-		numberApproved = 0
-	else:
-		numberApproved = int(numberApproved)
 
 
 	#Generate pool of lists to give out
@@ -479,7 +475,8 @@ def create():
 				'ActionsGuarded':'DiscoverPreviewAndAccept'
 			})
 
-	if numberApproved > 0:
+	if numberApproved != '':
+		numberApproved = int(numberApproved)
 		qualificationRequirements.append({
 				'QualificationTypeId':'00000000000000000040',
 				'Comparator':'GreaterThanOrEqualTo',
