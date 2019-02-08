@@ -12,7 +12,8 @@ On top of this key feature, our app can:
   - Automatically create and add subjects to Qualifications corresponding to which of your HITs they've completed
     - This is useful for whitelisting and blacklisting subjects from past experiments
   - Keep track of completed HITs and HITs in progress (e.g. subjects remaining, pending, completed, subjects per list, etc.)
-  - Expire, Delete, or Approve Assignments for a given HIT
+  - Expire or Delete HITs
+  - Approve, Reject, and Award Bonuses to Turkers
   - Switch easily between Sandbox and Mechanical Turk
   
 This first release of the microbatcher is designed specifically for Ibex experiments, but it contains helper functions for custom experiments that the researcher can host directly from the server. We use the application for this purpose in our lab, and we will provide a dummy example soon that fully demonstrates this alternative functionality.
@@ -100,7 +101,7 @@ Once a HIT has been successfully created, you can track its progress by visiting
 
 From this page, you can see how many Assignments (subjects) are pending or completed, as well as how many subjects have submitted for each list.
 
-If you enter your `PASSWORD` at the top of the page, you can expire, delete, or approve all assignments for a given HIT (that is, Group of micro-batched HITs). We will be adding the ability to approve and reject and award bonuses to individual workers soon.
+If you enter your `PASSWORD` at the top of the page, you can expire, delete, approve all assignments for a given HIT (that is, a given set of micro-batches), as well as approve, reject, or award bonuses to individual turkers.
 
 ### Reset Database
 
