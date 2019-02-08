@@ -649,8 +649,87 @@ def reviewHITs():
 
 # ----------------------------------------------------------------
 
+@app.route('/getAssignments')
+
+def getAssignments():
+	HITId = request.args.get('HITId')
+	hits = HIT.query.filter_by(HITGroup =HITId).all()
+
+	next_token = ''
+
+	assignments = []
+
+	#accumulate assignments for HITs in HITGroup
+	for hit in hits:
+		next_token = ''
+
+		while next_token is not None:
+			if next_token == '':
+				response = client.list_assignments_for_hit(
+					HITId = hit.HITId,
+					MaxResults = 100,
+					)
+			else:
+				response = client.list_assignments_for_hit(
+					HITId = hit.HITId,
+					MaxResults = 100,
+					NextToken= next_token
+					)
+
+			current_batch,next_token = get_resources_from(response)
+			assignments += current_batch
+
+
+	response_object = []
+	#print(assignments)
+
+	for ass in assignments:
+		response_object.append({'Status':ass['AssignmentStatus'],'AssignmentId':ass['AssignmentId'],'WorkerId':ass['WorkerId']})
+
+	return jsonify(response_object)
+
+# ----------------------------------------------------------------
+
+@app.route('/approveAssignment', methods=['POST'])
+
+def approveAssignment():
+	AssignmentId = request.json['AssignmentId'][1:]
+	response = client.get_assignment(AssignmentId=AssignmentId)['Assignment']
+	if response['AssignmentStatus'] != 'Submitted':
+		response  = client.approve_assignment(AssignmentId=AssignmentId,OverrideRejection=True)
+	else:
+		response  = client.approve_assignment(AssignmentId=AssignmentId)
+	return '200'
+
+# ----------------------------------------------------------------
+
+@app.route('/rejectAssignment', methods=['POST'])
+
+def rejectAssignment():
+	AssignmentId = request.json['AssignmentId'][1:]
+	response = client.reject_assignment(AssignmentId=AssignmentId,RequesterFeedback='Unsatifactory performance on HIT')
+	return '200'
+
+# ----------------------------------------------------------------
+
+@app.route('/awardBonus', methods=['POST'])
+
+def awardBonus():
+	AssignmentId = request.json['AssignmentId'][1:]
+	Bonus = request.json['Bonus']
+	sub = submit.query.filter_by(assignment=AssignmentId).first()
+	response = client.send_bonus(
+		AssignmentId=AssignmentId,
+		WorkerId = sub.worker,
+		BonusAmount = Bonus,
+		Reason = "Bonus payment awarded for Assignment "+AssignmentId)
+	return '200'
+
+# ----------------------------------------------------------------
+
+
 #approve all assignments for this HIT
-@app.route('/approveAssignments', methods=['POST'])
+@app.route('/approveAllAssignments', methods=['POST'])
 
 def approveAssignments():
 	HITId = request.json['HITId']
@@ -667,13 +746,13 @@ def approveAssignments():
 		while next_token is not None:
 			if next_token == '':
 				response = client.list_assignments_for_hit(
-					HITId = HITId,
+					HITId = hit.HITId,
 					AssignmentStatuses=['Submitted'],
 					MaxResults = 100,
 					)
 			else:
 				response = client.list_assignments_for_hit(
-					HITId = HITId,
+					HITId = hit.HITId,
 					AssignmentStatuses=['Submitted'],
 					MaxResults = 100,
 					NextToken= next_token

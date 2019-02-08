@@ -7,11 +7,11 @@
 		</script>
 	</head>
 	<body>
-
+		<p>Enter password to enable actions</p>
+		<input type='text' id='password' />
+		<button type='button' onclick='checkPassword()'>validate password</button></body><br /><hr />
 		<ul style="display:block;float:center;">
-			<li>Enter password to enable actions</li>
-			<input type='text' id='password' />
-			<button type='button' onclick='checkPassword()'>validate password</button>
+			
 			{% for HIT in HITs %}
 			<li id={{HIT.HITId}} style="display:inline;">
 				<p>HIT Title: {{ HIT.title }}</p>
@@ -25,7 +25,8 @@
 				{% endfor %}
 				<button class = 'button' name="{{ HIT.HITId }}" function='/expireHIT' disabled>Expire HIT</button>
 				<button class='button' name='{{ HIT.HITId }}' function='/deleteHIT' disabled>Delete HIT</button>
-				<button class='button' name='{{ HIT.HITId }}' function='/approveAssignments' disabled>Approve Submissions</button>
+				<button class='button' name='{{ HIT.HITId }}' function='/approveAllAssignments' disabled>Approve All Unrejected Assignments</button>
+				<button class='button' name='{{ HIT.HITId }}' function='/getAssignments' disabled>Approve/Reject/Award Bonus</button>
 				<hr />
 			</li>
 			{% endfor %}
@@ -33,33 +34,157 @@
 		<script>
 			console.log('loaded!');
 			$(document).ready(function(){
+				var onOffList = [];
 
 				console.log('loaded!');
-				$(".button").click(function(e){
+				$("ul").on('click','button',function(e){
 					//e.preventDefault();
 					var func = $(this).attr('function');
 					var name = $(this).attr('name');
 					console.log('click!');
-					$.ajax({
-						dataType:'json',
-						contentType: 'application/json',
-			            data: JSON.stringify({
-			                HITId: name
-			            }),
-			            type: 'POST',
-			            url: func,
-			            success: function(response) {
-			            	console.log(func);
-			                console.log(func == ('/deleteHIT'));
-			                if (func  === '/deleteHIT')
-			                	$('#'+name).remove();
-			                //location.reload();
-			            },
-			            error: function(error) {
-			                console.log(error);
-			            }
-			        });
+					if (func === '/getAssignments')
+					{
+						console.log('get');
+						$.ajax({
+							dataType:'json',
+				            data: {
+				                'HITId': name
+				            },
+				            type:'GET',
+				            url: func,
+				            success: function(response) {
+				            	console.log(response);
+
+				            	if(!onOffList.includes(name)){
+					            	for(i = 0; i < response.length; i++){
+					            			$('#'+name).append("<p class='remove' id='_"+response[i]['AssignmentId']+"'>WorkerId: " + response[i]['WorkerId']+'</p>');
+						            		if(response[i]['Status'] === 'Approved'){
+						            			$('#'+name).append("<p class='remove _"+response[i]['AssignmentId']+"'> Assignment Approved</p>");
+						            			$('#'+name).append("<input class='remove _"+response[i]['AssignmentId']+"' id='bonus_"+response[i]['AssignmentId']+"' type='number' value='0' min='0.0' step='0.01' />");
+						            			$('#'+name).append("<button class='remove button _"+response[i]['AssignmentId']+"' name='_"+response[i]['AssignmentId']+"'+ function='/awardBonus' >Award Bonus</button>");
+
+						            		}
+						            		else if( response[i]['Status'] === 'Rejected'){
+						            			$('#'+name).append("<p class='remove _"+response[i]['AssignmentId']+"'> Assignment Rejected</p>");
+						            			$('#'+name).append("<button class='remove button _"+response[i]['AssignmentId']+"' name='_"+response[i]['AssignmentId']+"'+ function='/approveAssignment' >Approve Assignment</button>");
+											}
+											else{
+												$('#'+name).append("<button class='remove button _"+response[i]['AssignmentId']+"' name='_"+response[i]['AssignmentId']+"'+ function='/approveAssignment' >Approve Assignment</button>");
+												$('#'+name).append("<button class='remove button _"+response[i]['AssignmentId']+"' name='_"+response[i]['AssignmentId']+"'+ function='/rejectAssignment' >Reject Assignment</button>");
+											}
+											$('#'+name).append('<hr class="remove" />');
+						            		
+						            	
+						            }
+						            if (response.length == 0)
+						            	onOffList.push(name);
+						        }
+				            	
+				            	
+				                //location.reload();
+				            },
+				            error: function(error) {
+				                console.log(error);
+				            }
+			        	});
+					}
+					else if (func === '/approveAssignment'){
+						console.log('approve');
+						$.ajax({
+							dataType:'json',
+							contentType: 'application/json',
+				            data: JSON.stringify({
+				                AssignmentId: name
+				            }),
+				            type: 'POST',
+				            url: func,
+				            success: function(response) {
+				            	$('.'+name).remove();
+				            	$('#'+name).after("<button class='remove button "+name+"' name='"+name+"'+ function='/awardBonus' >Award Bonus</button><br />");
+				            	$('#'+name).after("<input class='remove "+name+"' id='bonus"+name+"' type='number' min='0.0' value='0' step='0.01' />");
+				            	$('#'+name).after("<p class='remove "+name+"'> Assignment Approved</p>");
+				            	
+				                //location.reload();
+				            },
+				            error: function(error) {
+				                console.log(error);
+				            }
+			        	});
+					}
+					else if (func === '/rejectAssignment'){
+						console.log('reject');
+						$.ajax({
+							dataType:'json',
+							contentType: 'application/json',
+				            data: JSON.stringify({
+				                AssignmentId: name
+				            }),
+				            type: 'POST',
+				            url: func,
+				            success: function(response) {
+				            	$('.'+name).remove();
+				            	$('#'+name).after("<p class='remove "+name+"'> Assignment Rejected</p>");
+				            	$('#'+name).after("<button class='remove button "+name+"' name='"+name+"'+ function='/approveAssignment' >Approve Assignment</button>");
+				                //location.reload();
+				            },
+				            error: function(error) {
+				                console.log(error);
+				            }
+			        	});
+					}
+					else if (func === '/awardBonus'){
+						console.log('award');
+						console.log($('#bonus'+name).val());
+						if($('#bonus'+name).val()){
+							$.ajax({
+								dataType:'json',
+								contentType: 'application/json',
+					            data: JSON.stringify({
+					                AssignmentId: name,
+					                Bonus: $('#bonus'+name).val()
+					            }),
+					            type: 'POST',
+					            url: func,
+					            success: function(response) {
+					            	$('#'+name).after("<p class='remove "+name+"'> Bonus Awarded</p>");
+					                //location.reload();
+					            },
+					            error: function(error) {
+					                console.log(error);
+					            }
+				        	});
+						}
+					}
+					else{
+						console.log('else');
+						$.ajax({
+							dataType:'json',
+							contentType: 'application/json',
+				            data: JSON.stringify({
+				                HITId: name
+				            }),
+				            type: 'POST',
+				            url: func,
+				            success: function(response) {
+				            	console.log(func);
+				                console.log(func == ('/deleteHIT'));
+				                if (func  === '/deleteHIT')
+				                	$('#'+name).remove();
+				                if (func === '/approveAllAssignments'){
+				                	onOffList.splice(onOffList.indexOf(name),1);
+				                	$('.remove').remove();
+				                }
+				                //location.reload();
+				            },
+				            error: function(error) {
+				                console.log(error);
+				            }
+			        	});
+					}
+
 				});
+
+
 			});
 
 			function checkPassword(){
