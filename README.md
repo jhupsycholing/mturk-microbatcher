@@ -1,6 +1,17 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+# mTurk-Ibex-Study-Manager
+
+=======
+# murk-study-manager
+====
+>>>>>>> 806860c0285e02e72d524c6b8dc6a3a1c65d0974
+The `mTurk Study Manager` is an easy-to-use Flask application designed to streamline the process of running web experiments (Ibex experiments in particular) on the Mechanical Turk platform.
+=======
 # mTurk-Microbatcher
 
 The `mTurk microbatcher` is an easy-to-use Flask application designed to streamline the process of running web experiments (Ibex experiments in particular) on the Mechanical Turk platform.
+>>>>>>> 7c939a9213cfd3bf68f61badf42f2dbbcbeb32c3
 
 There are a number of mTurk interfaces available at the moment, but **this app will appeal to researchers interested in running web experiments that require multiple "lists"**, that is, multiple versions of the same experiment with different orderings of stimuli or different factors present.
 
@@ -12,22 +23,38 @@ On top of this key feature, our app can:
   - Automatically create and add subjects to Qualifications corresponding to which of your HITs they've completed
     - This is useful for whitelisting and blacklisting subjects from past experiments
   - Keep track of completed HITs and HITs in progress (e.g. subjects remaining, pending, completed, subjects per list, etc.)
-  - Expire or Delete HITs
-  - Approve, Reject, and Award Bonuses to Turkers
+  - Expire, Delete, or Approve Assignments for a given HIT
   - Switch easily between Sandbox and Mechanical Turk
   
+<<<<<<< HEAD
+<<<<<<< HEAD
+This first release of the Study Manager is designed specifically for Ibex experiments, but it contains helper functions for custom experiments that the researcher can host directly from the server. We use the application for this purpose in our lab, and we will provide a dummy example soon that fully demonstrates this alternative functionality.
+=======
 This first release of the microbatcher is designed specifically for Ibex experiments, but it contains helper functions for custom experiments that the researcher can host directly from the server. We use the application for this purpose in our lab, and we will provide a dummy example soon that fully demonstrates this alternative functionality.
+>>>>>>> 7c939a9213cfd3bf68f61badf42f2dbbcbeb32c3
 
 **This application was developed by Brian Leonard (bleona10@jhu.edu) in his capacity as Lab Manager of the JHU Computation and Psycholinguistics Lab (http://jhpsycholing.webfactional.com/), which is overseen by Dr. Tal Linzen (http://tallinzen.net)**
  
 ## Installation
 
+<<<<<<< HEAD
+Currently, we find it easiest to set up the `mTurk Study Manager` as a Heroku application using an SQLAlchemy database. Otherwise, the user will need to use their own computer as a high-traffic server or use a service like webfactional for hosting. These options will be fleshed out soon.
+=======
+This first release of the Study Manager is designed specifically for Ibex experiments, but it contains helper functions for custom experiments that the researcher can host directly from the server. We use the application for this purpose in our lab, and I will provide a dummy example soon that fully demonstrates this alternative functionality.
+ 
+Installation
+------------
+Currently, we find it easiest to set up `mTurk Study Manager` as a Heroku application using an SQLAlchemy database. Otherwise, the user will need to use their own computer as a high-traffic server or use a service like webfactional for hosting. These options will be fleshed out soon.
+>>>>>>> 806860c0285e02e72d524c6b8dc6a3a1c65d0974
+=======
 Currently, we find it easiest to set up the `mTurk microbatcher` as a Heroku application using an SQLAlchemy database. Otherwise, the user will need to use their own computer as a high-traffic server or use a service like webfactional for hosting. These options will be fleshed out soon.
+>>>>>>> 7c939a9213cfd3bf68f61badf42f2dbbcbeb32c3
 
 First, clone this repository into a directory on your computer
       
        git clone https://github.com/jhupsycholing/mturk-microbatcher.git
        
+<<<<<<< HEAD
 Then, create a free Heroku account if you don't already have one and select 'Create New App' once you've logged in.
 
 For 'Deployment Method', we'll be using the Heroku CLI, which you should download and install from https://devcenter.heroku.com/articles/heroku-command-line
@@ -101,7 +128,7 @@ Once a HIT has been successfully created, you can track its progress by visiting
 
 From this page, you can see how many Assignments (subjects) are pending or completed, as well as how many subjects have submitted for each list.
 
-If you enter your `PASSWORD` at the top of the page, you can expire, delete, approve all assignments for a given HIT (that is, a given set of micro-batches), as well as approve, reject, or award bonuses to individual turkers.
+If you enter your `PASSWORD` at the top of the page, you can expire, delete, or approve all assignments for a given HIT (that is, Group of micro-batched HITs). We will be adding the ability to approve and reject and award bonuses to individual workers soon.
 
 ### Reset Database
 
@@ -116,3 +143,6 @@ If for any reason you need to reset your database and clear your tables (make su
 
 
 
+=======
+Then, create a free Heroku account and 
+>>>>>>> 806860c0285e02e72d524c6b8dc6a3a1c65d0974

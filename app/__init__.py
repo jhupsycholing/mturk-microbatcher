@@ -140,6 +140,9 @@ def ibex():
 			return "As indicated in the instructions, this link only works once. For the validity of our experimental results, we request that turkers only go through the experiment once. Please return the HIT."
 			#if we're okay with the survey link working multiple times, we return the subject to the same list they began with
 			#return(redirect(ibexURL + '?withsquare' + str(ass.list)))
+		if assignmentId == ass.assignment:
+			submit.query.filter_by(assignment=assignmentId).delete()
+			db.session.commit()
 
 	#determine the remaining unassigned and uncompleted lists
 	for listnum in lists_distributed:
@@ -226,44 +229,10 @@ def submitAssignment():
 		for li in lists_completed:
 			new_lists.remove(li)
 
-		#if all current assignments have been submitted
-		if len(lists_completed) == hit.batch:
-
-			remaining = len(new_lists)
-
-			#make sure to release 9 or less subjects at a given time, to avoid mturk doubling the surcharge
-			if remaining > 9:
-				remaining = 9
-
-			#number of subjects for the next batch
-			newbatch = remaining
-
-			#if collection is not complete
-			if newbatch != 0:
-				#get hit info
-				get_hit = client.get_hit(HITId=hit.HITGroup)
-
-				#create new identical subhit
-				response = client.create_hit(
-					MaxAssignments=newbatch,
-					LifetimeInSeconds=2*24*60*60, #convert to seconds
-					AssignmentDurationInSeconds=get_hit['HIT']['AssignmentDurationInSeconds'],
-					Reward = get_hit['HIT']['Reward'],
-					Title=get_hit['HIT']['Title'],
-					Description=get_hit['HIT']['Description'],
-					Keywords = get_hit['HIT']['Keywords'],
-					Question = get_hit['HIT']['Question'],
-					QualificationRequirements=get_hit['HIT']['QualificationRequirements'])
-
-				#add record for new sub-HIT. Each group of sub-HITs is identified by the HITGroupId, which is the HITId of the first sub-HIT
-				newHIT = HIT(HITId=response['HIT']['HITId'],title=hit.title,lists=str(new_lists),lists_distributed='[]',lists_completed='[]',batch = newbatch,timeout=hit.timeout,ibexURL=hit.ibexURL,maxNum=hit.maxNum,surveyCode=hit.surveyCode,numGrabbed=0,HITGroup = hit.HITGroup)
-				db.session.add(newHIT)
-				db.session.commit()
-
-		
-
 		#get qualifications
 		quals = getQualifications()
+
+		group_qual = None
 
 		#don't use qualifications in sandbox
 		if not debug:
@@ -283,6 +252,56 @@ def submitAssignment():
 						WorkerId = worker,
 						IntegerValue=0,
 						SendNotification=False)
+
+					group_qual = qual['QualID']
+
+		#if all current assignments have been submitted
+		if len(lists_completed) == hit.batch:
+
+			remaining = len(new_lists)
+
+			#make sure to release 9 or less subjects at a given time, to avoid mturk doubling the surcharge
+			if remaining > 9:
+				remaining = 9
+
+			#number of subjects for the next batch
+			newbatch = remaining
+
+			#if collection is not complete
+			if newbatch != 0:
+				#get hit info
+				get_hit = client.get_hit(HITId=hit.HITGroup)
+
+				#add qualification to make sure there are no repeat workers
+				qualReqs = get_hit['HIT']['QualificationRequirements']
+				if not debug:
+					if group_qual:
+						qualReqs += [{
+							'QualificationTypeId':group_qual,
+							'Comparator':'DoesNotExist',
+							'ActionsGuarded':'DiscoverPreviewAndAccept'
+						}]
+
+				#create new identical subhit
+				response = client.create_hit(
+					MaxAssignments=newbatch,
+					LifetimeInSeconds=2*24*60*60, #convert to seconds
+					AssignmentDurationInSeconds=get_hit['HIT']['AssignmentDurationInSeconds'],
+					Reward = get_hit['HIT']['Reward'],
+					Title=get_hit['HIT']['Title'],
+					Description=get_hit['HIT']['Description'],
+					Keywords = get_hit['HIT']['Keywords'],
+					Question = get_hit['HIT']['Question'],
+					QualificationRequirements=qualReqs)
+
+				#add record for new sub-HIT. Each group of sub-HITs is identified by the HITGroupId, which is the HITId of the first sub-HIT
+				newHIT = HIT(HITId=response['HIT']['HITId'],title=hit.title,lists=str(new_lists),lists_distributed='[]',lists_completed='[]',batch = newbatch,timeout=hit.timeout,ibexURL=hit.ibexURL,maxNum=hit.maxNum,surveyCode=hit.surveyCode,numGrabbed=0,HITGroup = hit.HITGroup)
+				db.session.add(newHIT)
+				db.session.commit()
+
+		
+
+		
 
 
 		#validate submission
@@ -345,6 +364,7 @@ def externalSubmit():
 		if newbatch != 0:
 			#grab hit info from database
 			get_hit = client.get_hit(HITId=hit.HITGroup)
+
 
 			#create a new, identical HIT with 9 or less subjects
 			response = client.create_hit(
@@ -436,6 +456,8 @@ def create():
 		firstbatch = 1
 	if total <= 9:
 		firstbatch = total / 2
+	if total <= 14:
+		firstbatch = total / 2
 	else:
 		firstbatch = 9
 
@@ -495,15 +517,6 @@ def create():
 			Name=Title,
 			Description='Completed the study named '+Title,
 			QualificationTypeStatus='Active')	
-
-		#Excluded.append(create_response['QualificationType']['QualificationTypeId'])
-	#else:
-		#qual_ids = [qual['QualID'] for qual in quals if qual['name'].lower() == Title.lower()]
-		#for qual_id in qual_ids:
-			#Excluded.append(qual_id)
-
-
-
 
 
 	if Excluded:
@@ -572,7 +585,7 @@ def create():
 		Description='Qualification for HITGroup',
 		QualificationTypeStatus='Active')
 
-	Excluded.append(create_response['QualificationType']['QualificationTypeId'])
+	#Excluded.append(create_response['QualificationType']['QualificationTypeId'])
 	
 
 	newHIT = HIT(HITId=response['HIT']['HITId'],title=Title,lists=str(lists),lists_distributed='[]',lists_completed='[]',batch = firstbatch,timeout=int(Timeout) * 60,ibexURL=Ibex,maxNum=total,surveyCode=surveyCode,numGrabbed=0,HITGroup = response['HIT']['HITId'],created=datetime.now())
@@ -615,8 +628,23 @@ def reviewHITs():
 	HITs = client.list_hits()['HITs']
 	HIT_list = []
 
+	next_token = ''
+
+	allHits = []
+
+	while next_token is not None:
+		if next_token == '':
+			response = client.list_hits()
+		else:
+			response = client.list_hits(NextToken=next_token)
+		next_token = response.get('NextToken',None)
+		current_batch = [r for r in response['HITs']]
+		#current_batch,next_token = get_resources_from(response)
+		allHits += current_batch
+
 	#accumulate the statistics for every HIT in a given HITGroup
-	for hit in HITs:
+	for hit in allHits:
+
 		db_hit = HIT.query.filter_by(HITGroup=hit['HITId']).all()
 
 		if db_hit:
@@ -683,8 +711,13 @@ def getAssignments():
 	response_object = []
 	#print(assignments)
 
+	durations = []
+
 	for ass in assignments:
+		durations.append((ass['SubmitTime'] - ass['AcceptTime']).total_seconds())
 		response_object.append({'Status':ass['AssignmentStatus'],'AssignmentId':ass['AssignmentId'],'WorkerId':ass['WorkerId']})
+
+	print sum(durations) / len(durations)
 
 	return jsonify(response_object)
 

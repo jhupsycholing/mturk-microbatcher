@@ -5,9 +5,9 @@ class HIT(db.Model):
 
     HITId = db.Column(db.String(64), primary_key=True)
     title = db.Column(db.String(128),unique=False)
-    lists = db.Column(db.String(128),unique=False)
-    lists_distributed = db.Column(db.String(128),unique=False)
-    lists_completed = db.Column(db.String(128),unique=False)
+    lists = db.Column(db.String(1000),unique=False)
+    lists_distributed = db.Column(db.String(1000),unique=False)
+    lists_completed = db.Column(db.String(1000),unique=False)
     timeout = db.Column(db.Integer,unique=False)
     ibexURL = db.Column(db.String(120),unique=False)
     batch = db.Column(db.Integer,unique=False)
