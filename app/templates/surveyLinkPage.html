@@ -4,9 +4,13 @@
 			<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
 			<script type='text/javascript' src='https://s3.amazonaws.com/mturk-public/externalHIT_v1.js'></script>
 			<script type='text/javascript' src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js" ></script>
+			<script type="text/javascript" src="https://s3.amazonaws.com/mcd-headphone-check/v1.0/src/HeadphoneCheck.min.js"></script>
+    		<link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/mcd-headphone-check/v1.0/src/HeadphoneCheckStyle.css">
+
 		</head>
 		<body>
 			<div style='text-align:center;width=50%;'>
+
 				<form name='mturk_form' method='post' id = 'mturk_form' action='https://mturkrouter-api-heroku.herokuapp.com/submit'>
 				<input type='hidden' value='' name='assignmentId' id = 'assignmentId' />
 				<input type='hidden' value='' name='hitId' id = 'hitId' />
@@ -25,10 +29,24 @@
 				<p><input type='submit' id='submitButton' value='Please input correct survey code' disabled/></p>
 				</form>
 			</div>
+			<div id="hc-container"></div>
 			<script>
 				turkSetAssignmentID();
 				$('.disabled').click(function(e){
 					e.preventDefault();
+				});
+				$(document).ready(function() {
+        /* 4) Define what to do when the headphone check finishes */
+					$(document).on('hcHeadphoneCheckEnd', function(event, data) {
+						var headphoneCheckDidPass = data.didPass;
+						var headphoneCheckData = data.data;
+						var didPassMessage = headphoneCheckDidPass ? 'passed' : 'failed';
+						console.log(didPassMessage);
+					});
+
+					var headphoneCheckConfig = {};
+					/* 5) Run the headphone check, with customization options defined in headphoneCheckConfig */
+					HeadphoneCheck.runHeadphoneCheck(headphoneCheckConfig);
 				});
 				var oldURL = $('#link').attr('href');
 				var assignmentId = turkGetParam('assignmentId','');
