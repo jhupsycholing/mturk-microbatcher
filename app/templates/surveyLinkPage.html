@@ -4,6 +4,8 @@
 			<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
 			<script type='text/javascript' src='https://s3.amazonaws.com/mturk-public/externalHIT_v1.js'></script>
 			<script type='text/javascript' src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js" ></script>
+			<script src="{{ url_for('static', filename='js/HeadphoneCheck.js') }}"></script>
+			<link rel="stylesheet" href="{{ url_for('static', filename='css/HeadphoneCheckStyle.css') }}">
 		</head>
 		<body>
 			<div style='text-align:center;width=50%;'>
@@ -25,6 +27,7 @@
 				<p><input type='submit' id='submitButton' value='Please input correct survey code' disabled/></p>
 				</form>
 			</div>
+			<div id="hc-container"></div>
 			<script>
 				turkSetAssignmentID();
 				$('.disabled').click(function(e){
