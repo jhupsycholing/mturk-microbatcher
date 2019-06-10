@@ -6,10 +6,29 @@
 			<script type='text/javascript' src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js" ></script>
 			<script type="text/javascript" src="https://s3.amazonaws.com/mcd-headphone-check/v1.0/src/HeadphoneCheck.min.js"></script>
     		<link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/mcd-headphone-check/v1.0/src/HeadphoneCheckStyle.css">
+    		<style>
+    			.hc-buttonset-vertical label{
+				  display: block;
+				}
+				.hc-trial-div {
+				  border: 5px solid black;
+				  display: table;
+				  padding: 5px;
+				  margin: 5px;
+				}
+				.hc-calibration-div {
+				  position: relative;
+				  width: 30%;
+				  margin: 5px;
+				}
+			</style>
 
 		</head>
 		<body>
-			<div style='text-align:center;width=50%;'>
+			<div id='failpage' style='display:none;'>
+				You did not pass the necessary headphone check. Please return the HIT.
+			</div>
+			<div id='mainpage' style='text-align:center;width=50%;display:none;'>
 
 				<form name='mturk_form' method='post' id = 'mturk_form' action='https://mturkrouter-api-heroku.herokuapp.com/submit'>
 				<input type='hidden' value='' name='assignmentId' id = 'assignmentId' />
@@ -42,6 +61,11 @@
 						var headphoneCheckData = data.data;
 						var didPassMessage = headphoneCheckDidPass ? 'passed' : 'failed';
 						console.log(didPassMessage);
+						if(headphoneCheckDidPass)
+							$('#mainpage').style('display','block');
+						else
+							$('#failpage').style('display','block');
+
 					});
 
 					var headphoneCheckConfig = {};
