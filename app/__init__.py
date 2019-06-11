@@ -418,6 +418,8 @@ def create():
 	Keywords = request.args.get('Keywords')
 	Timeout = request.args.get('Timeout')
 	Duration = request.args.get('Duration')
+	Headphone = request.args.get('Headphone')
+	Consent = request.args.get('Consent')
 	Reward = request.args.get('Reward')
 	listNum = request.args.get('listNum')
 	Ibex = request.args.get('Ibex').replace('experiment.html','server.py')
