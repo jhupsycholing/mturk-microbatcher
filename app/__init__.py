@@ -547,6 +547,7 @@ def create():
 		  <ExternalURL>https://'''+app.config['APP_NAME']+'''.herokuapp.com/surveyCodePage?timeout='''+Timeout+'''&headphone='''+Headphone+'''&consent='''+Consent+'''</ExternalURL>
 		  <FrameHeight>800</FrameHeight>
 		</ExternalQuestion>'''
+		print(ExternalQuestion)
 
 		response = client.create_hit(
 			MaxAssignments=firstbatch,
