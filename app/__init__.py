@@ -542,7 +542,7 @@ def create():
 		#External Question redirects to the survey code page.
 		ExternalQuestion = '''
 		<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">
-		  <ExternalURL>https://'''+app.config['APP_NAME']+'''.herokuapp.com/surveyCodePage?timeout='''+Timeout+'''</ExternalURL>
+		  <ExternalURL>https://'''+app.config['APP_NAME']+'''.herokuapp.com/surveyCodePage?timeout='''+Timeout+'''&headphone='''+Headphone+'''&consent='''+Consent+'''</ExternalURL>
 		  <FrameHeight>800</FrameHeight>
 		</ExternalQuestion>'''
 
@@ -599,6 +599,16 @@ def create():
 
 def surveyCodePage():
 	timeout = request.args.get('timeout')
+	headphone = request.args.get('headphone')
+	consent = request.args.get('consent')
+	if headphone == 'yes':
+		require_headphones = True
+	else:
+		require_headphones = False
+	if consent == 'yes':
+		require_consent = True
+	else:
+		require_consent = False
 
 	#Specify descriptive text. Customize this
 	previewText = "In this HIT, you will be redirected to another website to participate in a behavioral experiment. When you have completed the experiment, you will receive a unique survey code, which you can enter below to confirm your assignment. In the experiment, you will be presented with text to read, and you may be asked simple questions about what you read. The maximum duration of this experiment is %d minutes, which is more than enough time to complete it. Once this time limit is exceeded, you will no longer be able to submit the HIT for compensation." % (int(timeout))
@@ -606,7 +616,7 @@ def surveyCodePage():
 	#Request that all subjects be native English speakers
 	nativeEnglish = True
 
-	return(render_template('surveyLinkPage.html',previewText=previewText,nativeEnglish=nativeEnglish))
+	return(render_template('surveyLinkPage.html',headphone=require_headphones,consent=requireConsent,previewText=previewText,nativeEnglish=nativeEnglish))
 
 
 # ----------------------------------------------------------------
