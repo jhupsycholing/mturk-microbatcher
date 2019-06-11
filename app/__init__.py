@@ -544,7 +544,7 @@ def create():
 		#External Question redirects to the survey code page.
 		ExternalQuestion = '''
 		<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">
-		  <ExternalURL>https://'''+app.config['APP_NAME']+'''.herokuapp.com/surveyCodePage?timeout='''+Timeout+'''&headphone='''+Headphone+'''&consent='''+Consent+'''</ExternalURL>
+		  <ExternalURL>https://'''+app.config['APP_NAME']+'''.herokuapp.com/surveyCodePage?headphone='''+Headphone+'''&consent='''+Consent+'''</ExternalURL>
 		  <FrameHeight>800</FrameHeight>
 		</ExternalQuestion>'''
 		print(ExternalQuestion)
