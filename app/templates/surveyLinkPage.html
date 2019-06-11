@@ -126,6 +126,8 @@
 					require_headphones = (require_headphones == 'True');
 					if(consentFirst && !(require_headphones))
 						$('#consent').css('display','block');
+					if(!(consentFirst) && !(require_headphones))
+						$('#mainpage').css('display','block');
 					//if(consentFirst)
 
 					$('#toSurveyPage').click(function(){
