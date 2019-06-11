@@ -619,7 +619,7 @@ def surveyCodePage():
 	#Request that all subjects be native English speakers
 	nativeEnglish = True
 
-	return(render_template('surveyLinkPage.html',headphone=require_headphones,consent=requireConsent,previewText=previewText,nativeEnglish=nativeEnglish))
+	return(render_template('surveyLinkPage.html',headphone=require_headphones,consent=require_consent,previewText=previewText,nativeEnglish=nativeEnglish))
 
 
 # ----------------------------------------------------------------
