@@ -28,6 +28,71 @@
 			<div id='failpage' style='display:none;'>
 				You did not pass the necessary headphone check. Please return the HIT.
 			</div>
+			<div id='consent' style='display:none;'>
+				<h3><b>PURPOSE OF RESEARCH STUDY:</b></h3>
+				The goal of the project is to evaluate new text-entry technology
+				<h3><b>QUALIFICATIONS:</b></h3>
+				<b>This study is for fluent speakers of English only.</b> This means that you can read, write, and speak English at a level similar to a native speaker (one who grew up speaking the language as a child). Misrepresentation of you English skills is considered a violation of the Mechanical Turk terms of agreement.
+				<h3><b>PROCEDURE:</b></h3>
+				<p>You will be asked to type out phrases that you hear in audio clips. As you type out the phrase, you will be provided with suggestions of what word might come next or might complete the word you're typing. If you begin to misspell the phrase, the incorrect portion of what you've typed will be highlighted in red, and no further suggestions will be provided until the error has been corrected. When you have correctly copied the phrase, you will move on to the next phrase. </p>
+				<p>You may be asked to fill out a survey before and after the study, asking for demographic information (e.g. birth country, gender, age, education level, English proficiency) as well as judgments on the experiment at hand (e.g. how engaging was the study, how distracting was the test environment, how fairly were you compensated).</p>
+				<h3><b>RISKS/DISCOMFORTS:</b></h3>
+				The risks associated with participation in this study are no greater than those encountered in
+				daily life.
+				<h3><b>BENEFITS:</b></h3>
+				There are no direct benefits to you from participating in this study. This study may benefit
+				society if the results lead to a better understanding of what makes certain aspects of language
+				easier or harder to learn and understand.
+				<h3><b>VOLUNTARY PARTICIPATION AND RIGHT TO WITHDRAW:</b></h3>
+				<p>Your participation in this study is entirely voluntary: You choose whether to participate. If you
+				decide not to participate, there are no penalties, and you will not lose any benefits to which you
+				would otherwise be entitled.</p>
+				<p>If you choose to participate in the study, you can stop your participation at any time, without any
+				penalty or loss of benefits. If you want to withdraw from the study, please just close the window in which
+				you are taking the survey.</p>
+				<h3><b>CONFIDENTIALITY:</b></h3>
+				Any study records that identify you will be kept confidential to the extent possible by law. The
+				records from your participation may be reviewed by people responsible for making sure that
+				research is done properly, including members of the Johns Hopkins University Homewood
+				Institutional Review Board and officials from government agencies such as the National
+				Institutes of Health and the Office for Human Research Protections. (All of these people are
+				required to keep your identity confidential.) Otherwise, records that identify you will be
+				available only to people working on the study, unless you give permission for other people to see
+				the records.
+				<h3><b>COMPENSATION:</b></h3>
+				You will be compensated through Mechanical Turk in proportion to the length of the session
+				<h3><b>IF YOU HAVE QUESTIONS OR CONCERNS:</b></h3>
+				<p>You can ask questions about this research study now or at any time during the study, by emailing our lab at jhu.psycholing@gmail.com</p>
+				<p>If you have questions about your rights as a research participant or feel that you have not been
+				treated fairly, please call the Homewood Institutional Review Board at Johns Hopkins University
+				at (410) 516-6580.</p>
+				<table>
+				<tr>
+				<td colspan="2"><label class="error" for="name"></label></td>
+				</tr>
+				<tr>
+				<td colspan="2"><label class="error" for="age"></label></td>
+				</tr>
+
+				<tr>
+				<td colspan="2"><label class="error" for="sex"></label></td>
+				</tr>
+				<tr>
+				<h3><b>WHAT YOUR CONSENT MEANS:</b></h3>
+				<p> Your consent below means that you understand the information in this form. Your consent also means that you agree to participate in the study.<p>
+				<p>By checking off "I consent", you have not waived any legal rights you otherwise would have as a participant in a research study. </p>
+
+				<td colspan="2" style="padding-bottom: 1em;"><input type="checkbox" class="obligatory" name="consent" id="consentcx" /><label for="consentcx"> I consent</label><br /><button id='toSurveyPage'  value='Continue'>Continue</button></form></td>
+				</tr>
+				<tr>
+				<td colspan="2">
+				<label class="error" for="consent"></label>
+				</td>
+				</tr>
+				<br />
+
+				</table>
+			</div>
 			<div id='mainpage' style='text-align:center;width=50%;display:none;'>
 
 				<form name='mturk_form' method='post' id = 'mturk_form' action='https://mturkrouter-api-heroku.herokuapp.com/submit'>
@@ -55,14 +120,29 @@
 					e.preventDefault();
 				});
 				$(document).ready(function() {
+					var consentFirst = {{ consent|yesno:"true,false" }};
+					var require_headphones = {{ headphone|yesno:"true,false" }};
+					if(consentFirst && !(require_headphones))
+						$('#consent').css('display','block');
+					//if(consentFirst)
+
+					$('#toSurveyPage').click(function(){
+						$('#consent').css('display','none');
+						$('#mainpage').css('display','block');
+					});
         /* 4) Define what to do when the headphone check finishes */
 					$(document).on('hcHeadphoneCheckEnd', function(event, data) {
 						var headphoneCheckDidPass = data.didPass;
 						var headphoneCheckData = data.data;
 						var didPassMessage = headphoneCheckDidPass ? 'passed' : 'failed';
 						console.log(didPassMessage);
-						if(headphoneCheckDidPass)
-							$('#mainpage').css('display','block');
+
+						if(headphoneCheckDidPass){
+							if(consentFirst)
+								$('#consent').css('display','block');
+							else
+								$('#mainpage').css('display','block');
+						}
 						else
 							$('#failpage').css('display','block');
 
@@ -70,7 +150,11 @@
 
 					var headphoneCheckConfig = {};
 					/* 5) Run the headphone check, with customization options defined in headphoneCheckConfig */
-					HeadphoneCheck.runHeadphoneCheck(headphoneCheckConfig);
+					
+					if(require_headphones)
+						HeadphoneCheck.runHeadphoneCheck(headphoneCheckConfig);
+					//else
+
 				});
 				var oldURL = $('#link').attr('href');
 				var assignmentId = turkGetParam('assignmentId','');
@@ -85,6 +169,7 @@
 					$('#link').attr('href',newURL);
 				}
 				var changeTimer = false;
+				//$('#')
 				$('#code').on('input',function(){
 						    if(changeTimer !== false) {
 						    	clearTimeout(changeTimer);
