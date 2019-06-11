@@ -120,8 +120,10 @@
 					e.preventDefault();
 				});
 				$(document).ready(function() {
-					var consentFirst = '{{ consent| bool | lower }}';
-					var require_headphones = '{{ headphone| bool | lower }}';
+					var consentFirst = '{{ consent }}';
+					consentFirst = (consentFirst == 'True');
+					var require_headphones = '{{ headphone }}';
+					require_headphones = (require_headphones == 'True');
 					if(consentFirst && !(require_headphones))
 						$('#consent').css('display','block');
 					//if(consentFirst)
