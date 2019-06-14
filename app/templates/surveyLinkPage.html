@@ -129,15 +129,22 @@
 					consentFirst = (consentFirst == 'True');
 					var require_headphones = '{{ headphone }}';
 					require_headphones = (require_headphones == 'True');
-					if(consentFirst && !(require_headphones))
+					if(consentFirst)
 						$('#consent').css('display','block');
 					if(!(consentFirst) && !(require_headphones))
 						$('#mainpage').css('display','block');
+
 					//if(consentFirst)
 
 					$('#toSurveyPage').click(function(){
-						$('#consent').css('display','none');
-						$('#mainpage').css('display','block');
+						if(require_headphones){
+							HeadphoneCheck.runHeadphoneCheck(headphoneCheckConfig);
+						}
+						else{
+							$('#consent').css('display','none');
+							$('#mainpage').css('display','block');
+						}
+						
 					});
         /* 4) Define what to do when the headphone check finishes */
 					$(document).on('hcHeadphoneCheckEnd', function(event, data) {
@@ -147,10 +154,7 @@
 						console.log(didPassMessage);
 
 						if(headphoneCheckDidPass){
-							if(consentFirst)
-								$('#consent').css('display','block');
-							else
-								$('#mainpage').css('display','block');
+							$('#mainpage').css('display','block');
 						}
 						else
 							$('#failpage').css('display','block');
@@ -160,8 +164,7 @@
 					var headphoneCheckConfig = {};
 					/* 5) Run the headphone check, with customization options defined in headphoneCheckConfig */
 					
-					if(require_headphones)
-						HeadphoneCheck.runHeadphoneCheck(headphoneCheckConfig);
+						
 					//else
 
 				});
