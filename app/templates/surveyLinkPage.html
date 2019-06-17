@@ -5,6 +5,7 @@
 			<script type='text/javascript' src='https://s3.amazonaws.com/mturk-public/externalHIT_v1.js'></script>
 			<script type='text/javascript' src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js" ></script>
 			<script type="text/javascript" src="https://s3.amazonaws.com/mcd-headphone-check/v1.0/src/HeadphoneCheck.min.js"></script>
+			
     		<link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/mcd-headphone-check/v1.0/src/HeadphoneCheckStyle.css">
     		<style type='text/css'>
     			.hc-buttonset-vertical label{
@@ -114,6 +115,8 @@
 				</form>
 			</div>
 			<div id="hc-container"></div>
-			<script  src="{{ url_for('static', filename='js/index.js') }}"></script>
+			<p id='consentFirst' style='display:none;'>{{ consent }}</p>
+			<p id='require_headphones' style='display:none;'>{{ headphone }}</p>
+			<script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
 		</body>
 	</html>
