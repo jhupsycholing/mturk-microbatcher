@@ -4,10 +4,6 @@
 			<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
 			<script type='text/javascript' src='https://s3.amazonaws.com/mturk-public/externalHIT_v1.js'></script>
 			<script type='text/javascript' src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js" ></script>
-<<<<<<< HEAD
-			<script src="{{ url_for('static', filename='js/HeadphoneCheck.js') }}"></script>
-			<link rel="stylesheet" href="{{ url_for('static', filename='css/HeadphoneCheckStyle.css') }}">
-=======
 			<script type="text/javascript" src="https://s3.amazonaws.com/mcd-headphone-check/v1.0/src/HeadphoneCheck.min.js"></script>
     		<link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/mcd-headphone-check/v1.0/src/HeadphoneCheckStyle.css">
     		<style type='text/css'>
@@ -27,7 +23,6 @@
 				}
 			</style>
 
->>>>>>> master
 		</head>
 		<body>
 			<div id='failpage' style='display:none;'>
@@ -85,9 +80,9 @@
 				<tr>
 				<h3><b>WHAT YOUR CONSENT MEANS:</b></h3>
 				<p> Your consent below means that you understand the information in this form. Your consent also means that you agree to participate in the study.<p>
-				<p>By checking off "I consent", you have not waived any legal rights you otherwise would have as a participant in a research study. </p>
+				<p>By checking off "I agree", you have not waived any legal rights you otherwise would have as a participant in a research study. </p>
 
-				<td colspan="2" style="padding-bottom: 1em;"><input type="checkbox" class="obligatory" name="consent" id="consentcx" /><label for="consentcx"> I consent</label><br /><button id='toSurveyPage'  value='Continue'>Continue</button></form></td>
+				<td colspan="2" style="padding-bottom: 1em;"><input type="checkbox" class="obligatory" name="consent" id="consentcx" /><label for="consentcx"> I agree</label><br /><button id='toSurveyPage'  value='Continue'>Continue</button></form></td>
 				</tr>
 				<tr>
 				<td colspan="2">
@@ -129,22 +124,23 @@
 					consentFirst = (consentFirst == 'True');
 					var require_headphones = '{{ headphone }}';
 					require_headphones = (require_headphones == 'True');
-					if(consentFirst)
+					if(consentFirst && require_headphones)
+						$('#consent').css('display','block');
+					if(consentFirst && !(require_headphones))
 						$('#consent').css('display','block');
 					if(!(consentFirst) && !(require_headphones))
 						$('#mainpage').css('display','block');
-
 					//if(consentFirst)
+					var headphoneCheckConfig = {};
 
 					$('#toSurveyPage').click(function(){
 						if(require_headphones){
 							HeadphoneCheck.runHeadphoneCheck(headphoneCheckConfig);
+							$('#consent').css('display','none');
 						}
-						else{
+						else
 							$('#consent').css('display','none');
 							$('#mainpage').css('display','block');
-						}
-						
 					});
         /* 4) Define what to do when the headphone check finishes */
 					$(document).on('hcHeadphoneCheckEnd', function(event, data) {
@@ -161,10 +157,10 @@
 
 					});
 
-					var headphoneCheckConfig = {};
+					//var headphoneCheckConfig = {};
 					/* 5) Run the headphone check, with customization options defined in headphoneCheckConfig */
 					
-						
+					
 					//else
 
 				});
