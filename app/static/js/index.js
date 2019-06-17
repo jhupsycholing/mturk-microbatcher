@@ -1,11 +1,14 @@
-turkSetAssignmentID();
+
         $('.disabled').click(function(e){
           e.preventDefault();
         });
         $(document).ready(function() {
-          var consentFirst = '{{ consent }}';
+          turkSetAssignmentID();
+          //var consentFirst = '{{ consent }}';
+          var consentFirst = $('#consentFirst').text();
+          var require_headphones = $('#require_headphones').text();
           consentFirst = (consentFirst == 'True');
-          var require_headphones = '{{ headphone }}';
+          //var require_headphones = '{{ headphone }}';
           require_headphones = (require_headphones == 'True');
           if(consentFirst && require_headphones)
             $('#consent').css('display','block');
@@ -21,10 +24,10 @@ turkSetAssignmentID();
               HeadphoneCheck.runHeadphoneCheck(headphoneCheckConfig);
               $('#consent').css('display','none');
             }
-            else
+            else{
               $('#consent').css('display','none');
               $('#mainpage').css('display','block');
-            $('#toSurveyPage').attr('diabled','true');
+            }
           });
         /* 4) Define what to do when the headphone check finishes */
           $(document).on('hcHeadphoneCheckEnd', function(event, data) {
