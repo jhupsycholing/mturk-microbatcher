@@ -52,7 +52,13 @@ else:
 #db specifications
 from models import submit,HIT
 
+# ----------------------------------------------------------------
 
+@app.route('/getFile')
+def getFile():
+	filename = request.args.get('filename')
+	print 'done'
+	return send_from_directory('./static/',filename)
 
 # ----------------------------------------------------------------
 
