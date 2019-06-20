@@ -10,17 +10,25 @@
           consentFirst = (consentFirst == 'True');
           //var require_headphones = '{{ headphone }}';
           require_headphones = (require_headphones == 'True');
+          var headphoneCheckConfig = {jsonPath:'/getFile?filename=wavJson.json'};
+
           if(consentFirst && require_headphones)
             $('#consent').css('display','block');
           if(consentFirst && !(require_headphones))
             $('#consent').css('display','block');
           if(!(consentFirst) && !(require_headphones))
             $('#mainpage').css('display','block');
+          if(!(consentFirst) && require_headphones){
+            console.log('checking headphones');
+            HeadphoneCheck.runHeadphoneCheck(headphoneCheckConfig);
+            $('#consent').css('display','none');
+          }
           //if(consentFirst)
-          var headphoneCheckConfig = {};
+          
 
           $('#toSurveyPage').click(function(){
             if(require_headphones){
+              console.log('checking headphones');
               HeadphoneCheck.runHeadphoneCheck(headphoneCheckConfig);
               $('#consent').css('display','none');
             }
